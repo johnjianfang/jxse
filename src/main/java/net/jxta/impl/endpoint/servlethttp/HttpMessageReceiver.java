@@ -55,6 +55,8 @@
  */
 package net.jxta.impl.endpoint.servlethttp;
 
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpServer;
 import net.jxta.endpoint.EndpointAddress;
 import net.jxta.endpoint.EndpointService;
 import net.jxta.endpoint.MessageReceiver;
@@ -63,14 +65,19 @@ import net.jxta.endpoint.MessengerEventListener;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.impl.util.TimeUtils;
 import net.jxta.logging.Logging;
-import org.mortbay.http.HttpContext;
-import org.mortbay.http.HttpServer;
-import org.mortbay.http.SocketListener;
-import org.mortbay.http.handler.ResourceHandler;
+//import org.mortbay.http.HttpContext;
+//import org.mortbay.http.HttpServer;
+//import org.mortbay.http.SocketListener;
+//import org.mortbay.http.handler.ResourceHandler;
+import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Server;
+import org.mortbay.jetty.handler.ResourceHandler;
+import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.ServletHandler;
-import org.mortbay.util.InetAddrPort;
-import org.mortbay.util.Log;
-import org.mortbay.util.LoggerLogSink;
+import org.mortbay.log.Log;
+//import org.mortbay.util.InetAddrPort;
+//import org.mortbay.util.Log;
+//import org.mortbay.util.LoggerLogSink;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -128,9 +135,9 @@ class HttpMessageReceiver implements MessageReceiver {
     /**
      *  The Jetty HTTP Server instance.
      */
-    private final HttpServer server;
-    private final ServletHandler handler;
-    private final SocketListener listener;
+    private final Server server;
+//    private final ServletHandler handler;
+    private final Connector listener;
 
     /**
      * The listener to invoke when making an incoming messenger.
@@ -161,51 +168,44 @@ class HttpMessageReceiver implements MessageReceiver {
 
         // Configure Jetty Logging
         if (!(Logging.SHOW_FINER && LOG.isLoggable(Level.FINER))) {
-            Log.instance().disableLog();
+            Log.getLog().setDebugEnabled(false);
         }
 
         // Setup the logger to match the rest of JXTA unless explicitly configured.
         // "LOG_CLASSES" is a Jetty thing.
         if (System.getProperty("LOG_CLASSES") == null) {
-            LoggerLogSink logSink = new LoggerLogSink();
-            Logger jettyLogger = Logger.getLogger(org.mortbay.http.HttpServer.class.getName());
-
-            logSink.setLogger(jettyLogger);
-
-            try {
-
-                logSink.start();
-                Log.instance().add(logSink);
-
-            } catch (Exception ex) {
-
-                Logging.logCheckedSevere(LOG, "Could not configure LoggerLogSink");
-
-            }
+//            LoggerLogSink logSink = new LoggerLogSink();
+//            Logger jettyLogger = Logger.getLogger(org.mortbay.http.HttpServer.class.getName());
+//
+//            logSink.setLogger(jettyLogger);
+//
+//            try {
+//
+//                logSink.start();
+//                Log.instance().add(logSink);
+//
+//            } catch (Exception ex) {
+//
+//                Logging.logCheckedSevere(LOG, "Could not configure LoggerLogSink");
+//
+//            }
         }
 
         // SPT - these methods call log internally.  If they are called before we add our JUL as a logSink (above)
         //       then a default STDERR logSink will also be added as default: org.mortbay.util.OutputStreamLogSink
-        org.mortbay.util.Code.setDebug(Logging.SHOW_FINER && LOG.isLoggable(Level.FINER));
-        org.mortbay.util.Code.setSuppressWarnings(!(Logging.SHOW_WARNING && LOG.isLoggable(Level.WARNING)));
-        org.mortbay.util.Code.setSuppressStack(!(Logging.SHOW_FINER && LOG.isLoggable(Level.FINER)));
+//        org.mortbay.util.Code.setDebug(Logging.SHOW_FINER && LOG.isLoggable(Level.FINER));
+//        org.mortbay.util.Code.setSuppressWarnings(!(Logging.SHOW_WARNING && LOG.isLoggable(Level.WARNING)));
+//        org.mortbay.util.Code.setSuppressStack(!(Logging.SHOW_FINER && LOG.isLoggable(Level.FINER)));
 
         // Initialize the Jetty HttpServer
-        server = new HttpServer();
-
-        // Create the listener and attach it to server.
-        InetAddrPort addrPort = new InetAddrPort(useInterface, port);
-
-        listener = new SocketListener(addrPort);
-
-        listener.setMinThreads(MIN_LISTENER_THREADS);
-        listener.setMaxThreads(MAX_LISTENER_THREADS);
-        listener.setMaxIdleTimeMs((int) MAX_THREAD_IDLE_DURATION);
-
-        server.addListener(listener);
+        server = new Server();
+        listener = createDefaultChannelConnector();
+        listener.setPort(port);
+        server.addConnector(listener);
 
         // Create a context for the handlers at the root, then add servlet
         // handler for the specified servlet class and add it to the context
+/*
         HttpContext handlerContext = server.getContext("/");
 
         handler = new ServletHandler();
@@ -219,7 +219,8 @@ class HttpMessageReceiver implements MessageReceiver {
 
         // Set up support for downloading midlets.
         if (System.getProperty("net.jxta.http.allowdownload") != null) {
-            HttpContext context = server.addContext("/midlets/*");
+            HttpContext context = server.addContext("/midlets*/
+/*");
 
             context.setResourceBase("./midlets/");
             // context.setDirAllowed(false);
@@ -233,6 +234,17 @@ class HttpMessageReceiver implements MessageReceiver {
         }
 
         handler.addServlet(MSG_RECEIVER_RELATIVE_URI, HttpMessageServlet.class.getName());
+*/
+    }
+
+    public static Connector createDefaultChannelConnector() {
+        SelectChannelConnector ret = new SelectChannelConnector();
+        ret.setLowResourceMaxIdleTime(10000);
+        ret.setAcceptQueueSize(128);
+        ret.setResolveNames(false);
+        ret.setUseDirectBuffers(false);
+        ret.setHeaderBufferSize(1024*64);
+        return ret;
     }
 
     synchronized void start() throws PeerGroupException {
@@ -240,7 +252,7 @@ class HttpMessageReceiver implements MessageReceiver {
         try {
 
             server.start();
-            handler.getServletContext().setAttribute("HttpMessageReceiver", this);
+//            handler.getServletContext().setAttribute("HttpMessageReceiver", this);
 
         } catch (Exception e) {
 
@@ -266,12 +278,13 @@ class HttpMessageReceiver implements MessageReceiver {
         messengerEventListener = null;
 
         try {
-
-            server.stop();
+         server.stop();
 
         } catch (InterruptedException e) {
 
             Logging.logCheckedSevere(LOG, "Interrupted during stop()\n", e);
+
+        } catch (Exception e) {
 
         }
 

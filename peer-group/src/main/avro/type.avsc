@@ -1,0 +1,3 @@
+{"type":"enum", "name": "Type", "namespace": "org.apache.peer.protocol",
+ "symbols": ["DISCOVERY", "PEER","RDV", "ROUTE", "TRANSPORT", "SRDI"]
+}

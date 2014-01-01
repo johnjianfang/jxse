@@ -1,0 +1,12 @@
+@namespace("org.apache.peer.protocol")
+protocol Common {
+    record Peer {
+        string pid;
+        string address;
+    }
+
+    record Payload {
+        bytes data;
+        long crc;
+    }
+}

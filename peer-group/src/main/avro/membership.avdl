@@ -1,0 +1,28 @@
+@namespace("org.apache.peer.protocol")
+protocol Membership {
+    import idl "common.avdl";
+
+    record JoinRequest {
+        string pid;
+        string gid;
+    }
+
+    record Challenge {
+        int seed;
+    }
+
+    record ChallengeResponse {
+        string response;
+    }
+
+    record JoinResponse {
+        string gid;
+        boolean successful;
+        array<Peer> peers;
+    }
+
+    Challenge join(JoinRequest request);
+
+    JoinResponse challenge(ChallengeResponse response);
+
+}

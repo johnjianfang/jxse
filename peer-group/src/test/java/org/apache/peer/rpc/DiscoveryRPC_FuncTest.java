@@ -14,9 +14,7 @@ import org.junit.Test;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -28,7 +26,7 @@ public class DiscoveryRPC_FuncTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        server = new NettyServer(new SpecificResponder(Discovery.class, new DiscoveryProtocol()), new InetSocketAddress("127.0.0.1", 65111));
+        server = new NettyServer(new SpecificResponder(Discovery.class, new PeerProtocol()), new InetSocketAddress("127.0.0.1", 65111));
         client = new NettyTransceiver(new InetSocketAddress("127.0.0.1", 65111));
         proxy = (Discovery) SpecificRequestor.getClient(Discovery.class, client);
     }
@@ -58,7 +56,7 @@ public class DiscoveryRPC_FuncTest {
     @Test
     public void testPing() {
         try {
-            proxy.heartbeat();
+            proxy.ping();
         } catch (Exception e) {
             fail(e.getMessage());
         }

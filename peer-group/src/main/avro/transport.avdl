@@ -1,0 +1,13 @@
+@namespace("org.apache.peer.protocol")
+protocol Transport {
+    import idl "common.avdl";
+
+    record Result {
+        boolean successful;
+        string message;
+    }
+
+    Result unicast(string pid, Payload payload);
+
+    Result broadcast(Payload payload);
+}

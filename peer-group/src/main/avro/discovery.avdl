@@ -9,7 +9,7 @@ protocol Discovery {
         string description;
         Type type;
         array<@java-class("java.lang.String") string> endpoints;
-        union { map<string>, null} parameters;
+        union { map<string>, null} parameters = null;
     }
 
     record Response {
@@ -22,5 +22,6 @@ protocol Discovery {
 
     Response hello(Advertisement adv);
 
-    void heartbeat() oneway;
+    void ping() oneway;
+
 }

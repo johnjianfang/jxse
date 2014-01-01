@@ -26,7 +26,7 @@ public class DiscoveryRPC_FuncTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        server = new NettyServer(new SpecificResponder(Discovery.class, new PeerProtocol()), new InetSocketAddress("127.0.0.1", 65111));
+        server = new NettyServer(new SpecificResponder(Discovery.class, new DummyPeerProtocol()), new InetSocketAddress("127.0.0.1", 65111));
         client = new NettyTransceiver(new InetSocketAddress("127.0.0.1", 65111));
         proxy = (Discovery) SpecificRequestor.getClient(Discovery.class, client);
     }

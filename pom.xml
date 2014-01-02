@@ -112,7 +112,7 @@
     <modules>
         <module>jxse</module>
         <module>peer-group</module>
-        <module>tutorials</module>
+        <!--module>tutorials</module-->
     </modules>
 
     <dependencies>

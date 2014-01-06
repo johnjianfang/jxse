@@ -6,6 +6,7 @@ protocol Common {
     }
 
     record Payload {
+        long sequ;
         bytes data;
         long crc;
     }

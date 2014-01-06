@@ -7,5 +7,5 @@ public interface Authenticator {
 
     boolean verifyChallenge(String gid, String pid, String response);
 
-    String generateChallenge(String gid, int seed);
+    String createChallenge(String gid, int seed);
 }

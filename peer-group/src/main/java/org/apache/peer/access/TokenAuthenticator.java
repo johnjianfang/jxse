@@ -45,12 +45,12 @@ public class TokenAuthenticator implements Authenticator {
             return false;
         }
 
-        String challenge = generateChallenge(gid, seed);
+        String challenge = createChallenge(gid, seed);
 
         return challenge.equals(response);
     }
 
-    public String generateChallenge(String gid, int seed) {
+    public String createChallenge(String gid, int seed) {
         String token = tokens.get(gid);
         if (token == null) {
             log.warn("Cannot find token for group " + gid);

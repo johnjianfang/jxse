@@ -5,7 +5,7 @@ import org.apache.peer.entity.PeerView;
 
 public interface PeerDiscover extends Runnable {
 
-    void discover();
+    void discover(String seed);
 
     PeerView getPeerView();
 

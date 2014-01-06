@@ -9,11 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Set;
 
 public class LanPeerDiscover implements PeerDiscover {
@@ -24,27 +19,25 @@ public class LanPeerDiscover implements PeerDiscover {
 
     private final int port;
 
-    private Set<String> seeds;
+    private final String seed;
 
     private Set<String> filters;
 
     private boolean running = false;
 
-    public LanPeerDiscover(PeerView peerView, int port) {
+    public LanPeerDiscover(PeerView peerView, int port, String seed, Set<String> filters) {
         this.peerView = peerView;
         this.port = port;
-        this.seeds = new HashSet<String>();
-        this.filters = new HashSet<String>();
+        this.seed = seed;
+        this.filters = filters;
     }
 
     @Override
-    public void discover() {
-        for (String seed: seeds) {
-            for (int i=0; i<=254; i++) {
-                String ip = IpUtils.getIpAddress(seed, i);
-                if (!filters.contains(ip)) {
-                    check(ip);
-                }
+    public void discover(String seed) {
+        for (int i = 0; i <= 254; i++) {
+            String ip = IpUtils.getIpAddress(seed, i);
+            if (!filters.contains(ip)) {
+                check(ip);
             }
         }
     }
@@ -74,27 +67,9 @@ public class LanPeerDiscover implements PeerDiscover {
     @Override
     public void run() {
         running = true;
-        try {
-            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements()) {
-                NetworkInterface nif = interfaces.nextElement();
-                if (!nif.isLoopback()) {
-                    Enumeration<InetAddress> addresses = nif.getInetAddresses();
-                    while (addresses.hasMoreElements()) {
-                        InetAddress ip = addresses.nextElement();
-                        if ((!ip.isLinkLocalAddress()) && (!ip.isAnyLocalAddress()) && (!ip.isLoopbackAddress())) {
-                            filters.add(ip.getHostAddress());
-                            seeds.add(IpUtils.getIpAddress(ip.getHostAddress(), 0));
-                        }
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            log.error(e.getMessage(), e);
-        }
 
         try {
-            discover();
+            discover(seed);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

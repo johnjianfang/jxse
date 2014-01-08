@@ -21,4 +21,12 @@ public class PeerInfo {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        return "Peer{" +
+                "id='" + id + '\'' +
+                ", address='" + address + '\'' +
+                '}';
+    }
 }

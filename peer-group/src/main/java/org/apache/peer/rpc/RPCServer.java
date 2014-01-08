@@ -5,8 +5,6 @@ import org.apache.avro.ipc.NettyServer;
 import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.peer.protocol.Discovery;
-import org.apache.peer.protocol.PeerProtocol;
-import org.apache.peer.server.LifeCycle;
 import org.apache.peer.server.ShutdownListener;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.handler.execution.ExecutionHandler;
@@ -14,25 +12,28 @@ import org.jboss.netty.handler.execution.ExecutionHandler;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 
-public class RPCServer implements Runnable, ShutdownListener {
+public class RPCServer<T> implements Runnable, ShutdownListener {
 
     private Server server;
 
     final private int port;
 
-    final private PeerProtocol protocol;
+    final private Class<T> iface;
+
+    final private T protocol;
 
     private volatile boolean running = false;
 
-    public RPCServer(int port, PeerProtocol protocol) {
+    public RPCServer(int port, Class<T> iface, T protocol) {
         this.port = port;
+        this.iface = iface;
         this.protocol = protocol;
 
     }
 
     @Override
     public void run() {
-        server = new NettyServer(new SpecificResponder(PeerProtocol.class, protocol),
+        server = new NettyServer(new SpecificResponder(iface, protocol),
                 new InetSocketAddress(port),
                 new NioServerSocketChannelFactory(
                         Executors.newCachedThreadPool(), Executors.newCachedThreadPool()),

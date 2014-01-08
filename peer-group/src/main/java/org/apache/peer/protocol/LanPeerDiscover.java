@@ -37,6 +37,7 @@ public class LanPeerDiscover implements PeerDiscover {
         for (int i = 0; i <= 254; i++) {
             String ip = IpUtils.getIpAddress(seed, i);
             if (!filters.contains(ip)) {
+                log.info("Checking " + ip);
                 check(ip);
             }
         }
@@ -50,7 +51,7 @@ public class LanPeerDiscover implements PeerDiscover {
             peer.setAddress(ip);
             peer.setId(ip);
             peerView.addPeer(peer);
-
+            log.info("Found peer " + peer);
             return true;
         } catch (IOException e) {
             log.debug(e.getMessage());

@@ -13,6 +13,7 @@ import java.net.SocketException;
 import java.util.*;
 
 public class PeerDiscoveryManager implements Runnable, ShutdownListener {
+
     private static final Logger log = LoggerFactory.getLogger(PeerDiscoveryManager.class);
 
     private final Set<String> seeds;

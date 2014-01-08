@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
  *
  * Date: Jun 26, 2009
  */
-public class HOTP_FT {
+public class HOTP_FuncTest {
     
 	private static HOTPValidator validator;
 	private static HOTPGenerator client;

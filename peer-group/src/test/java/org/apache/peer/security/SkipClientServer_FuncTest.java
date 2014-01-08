@@ -16,7 +16,7 @@ import static org.junit.Assert.fail;
  *
  * Date: Jun 26, 2009
  */
-public class SkipClientServer_FT {
+public class SkipClientServer_FuncTest {
 	private static Client client;
 	private static Server server;
 

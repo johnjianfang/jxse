@@ -11,7 +11,7 @@ import static org.junit.Assert.fail;
  *
  * Date: Jun 26, 2009
  */
-public class OTPTokenImpl_UT {
+public class OTPTokenImpl_UnitTest {
 	private static String SECRET_STRING = "12345678901234567890";
 	private static HOTPAlgorithm algorithm;
 

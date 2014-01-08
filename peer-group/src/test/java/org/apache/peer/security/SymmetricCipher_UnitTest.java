@@ -11,7 +11,7 @@ import static org.junit.Assert.fail;
  *         Date: Jul 7, 2009
  *
  */
-public class SymmetricCipher_UT {
+public class SymmetricCipher_UnitTest {
 
     @Test
     public void testAES(){

@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
  *
  * Date: Jun 26, 2009
  */
-public class SKip_UT {
+public class SKip_UnitTest {
 	private static Skip server;
 	private static Skip client;
 

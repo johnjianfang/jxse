@@ -9,7 +9,7 @@ import static org.junit.Assert.assertEquals;
  *
  * Date: Jul 3, 2009
  */
-public class SecurityUtil_UT {
+public class SecurityUtil_UnitTest {
 
     @Test
     public void testCompressDecompress(){

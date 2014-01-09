@@ -39,12 +39,12 @@
     </appender>
 
     <category name="org.apache.peer">
-        <priority value="debug"/>
+        <priority value="info"/>
     </category>
 
     <!-- Root Logger -->
     <root>
-        <priority value="debug"/>
+        <priority value="info"/>
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="STDERR"/>
     </root>

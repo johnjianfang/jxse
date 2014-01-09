@@ -1,6 +1,8 @@
 package org.apache.peer.protocol;
 
 
+import org.apache.avro.ipc.NettyTransceiver;
+import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.peer.entity.PeerInfo;
 import org.apache.peer.entity.PeerView;
 import org.apache.peer.rpc.RPCClientFactory;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Set;
 
 public class LanPeerDiscover implements PeerDiscover {
@@ -44,9 +47,11 @@ public class LanPeerDiscover implements PeerDiscover {
     }
 
     public boolean check(String ip) {
+        NettyTransceiver client = null;
         try {
-            Discovery client = RPCClientFactory.getProxy(ip, port, Discovery.class);
-            client.ping();
+            client = new NettyTransceiver(new InetSocketAddress(ip, port));
+            Discovery discovery = SpecificRequestor.getClient(Discovery.class, client);
+            discovery.ping();
             PeerInfo peer = new PeerInfo();
             peer.setAddress(ip);
             peer.setId(ip);
@@ -57,6 +62,14 @@ public class LanPeerDiscover implements PeerDiscover {
             log.debug(e.getMessage());
 
             return false;
+        } finally {
+            if (client != null) {
+                try {
+                    client.close();
+                } catch (Exception e) {
+                    log.info(e.getMessage(), e);
+                }
+            }
         }
     }
 

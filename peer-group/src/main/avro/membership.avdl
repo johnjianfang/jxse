@@ -2,6 +2,10 @@
 protocol Membership {
     import idl "common.avdl";
 
+    Response hello(Advertisement adv);
+
+    void ping() oneway;
+
     record JoinRequest {
         string pid;
         string gid;

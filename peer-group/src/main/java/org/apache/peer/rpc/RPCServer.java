@@ -4,7 +4,6 @@ package org.apache.peer.rpc;
 import org.apache.avro.ipc.NettyServer;
 import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.specific.SpecificResponder;
-import org.apache.peer.protocol.Discovery;
 import org.apache.peer.server.ShutdownListener;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.handler.execution.ExecutionHandler;

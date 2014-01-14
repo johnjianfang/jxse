@@ -1,5 +1,9 @@
 @namespace("org.apache.peer.protocol")
 protocol Common {
+    enum Type {
+        DISCOVERY, PEER, RDV, ROUTE, TRANSPORT, SRDI
+    }
+
     record Peer {
         string pid;
         string address;
@@ -10,4 +14,29 @@ protocol Common {
         bytes data;
         long crc;
     }
+
+    record Advertisement {
+        string pid;
+        string gid;
+        string name;
+        string description;
+        Type type;
+        array<@java-class("java.lang.String") string> endpoints;
+        union { map<string>, null} parameters = null;
+    }
+
+    record Criteria {
+        string keyword;
+        union { map<string>, null} conditions = null;
+    }
+
+    record Response {
+        string message;
+    }
+
+    record Result {
+        boolean successful;
+        string message;
+    }
+
 }

@@ -4,7 +4,7 @@ package org.apache.peer.rpc;
 import org.apache.avro.AvroRemoteException;
 import org.apache.peer.protocol.*;
 
-public class DummyPeerProtocol implements Discovery, Membership, Transport {
+public class DummyPeerProtocol implements Membership, Transport {
     @Override
     public Response hello(Advertisement adv) throws AvroRemoteException {
         Response response = new Response();
@@ -25,6 +25,16 @@ public class DummyPeerProtocol implements Discovery, Membership, Transport {
 
     @Override
     public JoinResponse challenge(ChallengeResponse response) throws AvroRemoteException {
+        return null;
+    }
+
+    @Override
+    public Result advertise(Advertisement adv) throws AvroRemoteException {
+        return null;
+    }
+
+    @Override
+    public Result search(Criteria criteria) throws AvroRemoteException {
         return null;
     }
 

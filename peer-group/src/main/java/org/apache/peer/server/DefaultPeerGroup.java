@@ -1,9 +1,8 @@
 package org.apache.peer.server;
 
-
-import org.apache.peer.protocol.Discovery;
+import org.apache.peer.protocol.Membership;
+import org.apache.peer.protocol.MembershipProtocol;
 import org.apache.peer.protocol.PeerDiscoveryManager;
-import org.apache.peer.protocol.PeerDiscoveryProtocol;
 import org.apache.peer.rpc.RPCServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +22,7 @@ public class DefaultPeerGroup extends Thread implements LifeCycle {
 
     private final String token;
 
-    private RPCServer discoveryRPCServer;
+    private RPCServer memberRPCServer;
 
     private PeerDiscoveryManager discoveryManager;
 
@@ -42,9 +41,9 @@ public class DefaultPeerGroup extends Thread implements LifeCycle {
         Runtime.getRuntime().addShutdownHook(hook);
 
         listeners = new ArrayList<ShutdownListener>();
-        discoveryRPCServer = new RPCServer(port, Discovery.class, new PeerDiscoveryProtocol());
-        listeners.add(discoveryRPCServer);
-        Thread rpcServerThread = new Thread(discoveryRPCServer);
+        memberRPCServer = new RPCServer(port, Membership.class, new MembershipProtocol());
+        listeners.add(memberRPCServer);
+        Thread rpcServerThread = new Thread(memberRPCServer);
         rpcServerThread.setName("RPC Server Thread");
         rpcServerThread.start();
 

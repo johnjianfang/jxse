@@ -5,7 +5,6 @@ import org.apache.avro.ipc.NettyTransceiver;
 import org.apache.avro.ipc.specific.SpecificRequestor;
 import org.apache.peer.entity.PeerInfo;
 import org.apache.peer.entity.PeerView;
-import org.apache.peer.rpc.RPCClientFactory;
 import org.apache.peer.util.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +49,8 @@ public class LanPeerDiscover implements PeerDiscover {
         NettyTransceiver client = null;
         try {
             client = new NettyTransceiver(new InetSocketAddress(ip, port));
-            Discovery discovery = SpecificRequestor.getClient(Discovery.class, client);
-            discovery.ping();
+            Membership membership = SpecificRequestor.getClient(Membership.class, client);
+            membership.ping();
             PeerInfo peer = new PeerInfo();
             peer.setAddress(ip);
             peer.setId(ip);

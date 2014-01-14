@@ -2,10 +2,9 @@
 protocol Transport {
     import idl "common.avdl";
 
-    record Result {
-        boolean successful;
-        string message;
-    }
+    Result advertise(Advertisement adv);
+
+    Result search(Criteria criteria);
 
     Result unicast(string pid, Payload payload);
 

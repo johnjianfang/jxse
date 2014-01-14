@@ -19,16 +19,16 @@ import java.util.List;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class DiscoveryRPC_FuncTest {
+public class MembershipRPC_FuncTest {
     private static Server server;
     private static NettyTransceiver client;
-    private static Discovery proxy;
+    private static Membership proxy;
 
     @BeforeClass
     public static void setup() throws Exception {
-        server = new NettyServer(new SpecificResponder(Discovery.class, new DummyPeerProtocol()), new InetSocketAddress("127.0.0.1", 65111));
+        server = new NettyServer(new SpecificResponder(Membership.class, new DummyPeerProtocol()), new InetSocketAddress("127.0.0.1", 65111));
         client = new NettyTransceiver(new InetSocketAddress("127.0.0.1", 65111));
-        proxy = (Discovery) SpecificRequestor.getClient(Discovery.class, client);
+        proxy = (Membership) SpecificRequestor.getClient(Membership.class, client);
     }
 
     @Test

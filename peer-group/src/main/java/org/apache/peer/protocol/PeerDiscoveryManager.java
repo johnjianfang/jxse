@@ -1,6 +1,8 @@
 package org.apache.peer.protocol;
 
 
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.peer.entity.PeerView;
 import org.apache.peer.server.ShutdownListener;
 import org.apache.peer.util.IpUtils;
@@ -11,6 +13,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.*;
+import java.util.concurrent.Executors;
 
 public class PeerDiscoveryManager implements Runnable, ShutdownListener {
 
@@ -26,11 +29,21 @@ public class PeerDiscoveryManager implements Runnable, ShutdownListener {
 
     private boolean running;
 
-    public PeerDiscoveryManager(int port) {
+    private final ListeningExecutorService pool;
+
+    private final int threadNum;
+
+    public PeerDiscoveryManager(Set<String> seeds, int port, int threadNum) {
         this.port = port;
-        this.seeds = new HashSet<String>();
+        this.threadNum = threadNum;
+        if (seeds == null || seeds.isEmpty()) {
+            this.seeds = new HashSet<String>();
+        } else {
+            this.seeds = seeds;
+        }
         this.filters = new HashSet<String>();
         this.peerView = new PeerView();
+        this.pool = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(this.threadNum));
     }
 
     public void init() {
@@ -80,8 +93,16 @@ public class PeerDiscoveryManager implements Runnable, ShutdownListener {
     @Override
     public void run() {
         running = true;
-        init();
-        discover();
+        if (seeds != null && !seeds.isEmpty()) {
+            log.info("Using existing seeds to discover peers...");
+            SeedPeerDiscover seedPeerDiscover = new SeedPeerDiscover(peerView, seeds, port);
+            seedPeerDiscover.run();
+        }
+        if (peerView.getPeers() == null || peerView.getPeers().isEmpty()) {
+            log.info("Using Lan discover to find peers...");
+            init();
+            discover();
+        }
     }
 
     @Override

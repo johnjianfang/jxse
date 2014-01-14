@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DefaultPeerGroup extends Thread implements LifeCycle {
 
@@ -22,13 +23,19 @@ public class DefaultPeerGroup extends Thread implements LifeCycle {
 
     private final String token;
 
+    private final Set<String> seeds;
+
+    private int threadNum;
+
     private RPCServer memberRPCServer;
 
     private PeerDiscoveryManager discoveryManager;
 
-    public DefaultPeerGroup(int port, String token) {
+    public DefaultPeerGroup(Set<String> seeds, int port, String token) {
+        this.seeds = seeds;
         this.port = port;
         this.token = token;
+        this.threadNum = 10;
     }
 
     @Override
@@ -47,7 +54,7 @@ public class DefaultPeerGroup extends Thread implements LifeCycle {
         rpcServerThread.setName("RPC Server Thread");
         rpcServerThread.start();
 
-        discoveryManager = new PeerDiscoveryManager(port);
+        discoveryManager = new PeerDiscoveryManager(seeds, port, threadNum);
         listeners.add(discoveryManager);
         Thread discoveryManagerThread = new Thread(discoveryManager);
         discoveryManagerThread.setName("Discovery Manager Thread");
